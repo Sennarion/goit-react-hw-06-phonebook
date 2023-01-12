@@ -1,17 +1,16 @@
-import PropTypes from 'prop-types';
-import { useState, useRef, useEffect } from 'react';
-import { StyledForm, Label, Input, LabelName } from './Form.styled';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact } from 'redux/contactsSlice';
+import { nanoid } from 'nanoid';
+import { StyledForm, Input, LabelName } from './Form.styled';
 import { Button } from 'components';
 
-export default function Form({ addNewContact, setIsModalOpen }) {
+export default function Form() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
-  const nameInputRef = useRef(null);
-
-  useEffect(() => {
-    nameInputRef.current.focus();
-  }, []);
+  const dispatch = useDispatch();
+  const contacts = useSelector(state => state.contacts.items);
 
   const onInputChange = e => {
     const { name, value } = e.target;
@@ -30,20 +29,22 @@ export default function Form({ addNewContact, setIsModalOpen }) {
 
   const onFormSubmit = e => {
     e.preventDefault();
-    addNewContact({ name, number });
 
+    if (contacts.find(contact => contact.name === name)) {
+      alert(`${name} is already in contacts`);
+      return;
+    }
+
+    dispatch(addContact({ id: nanoid(), name, number }));
     setName('');
     setNumber('');
-    setIsModalOpen(false);
   };
 
   return (
     <StyledForm onSubmit={onFormSubmit}>
-      <Label>
+      <label>
         <LabelName>Name</LabelName>
-
         <Input
-          ref={nameInputRef}
           type="text"
           name="name"
           pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
@@ -52,9 +53,8 @@ export default function Form({ addNewContact, setIsModalOpen }) {
           onChange={onInputChange}
           value={name}
         />
-      </Label>
-
-      <Label>
+      </label>
+      <label>
         <LabelName>Number</LabelName>
         <Input
           type="tel"
@@ -65,13 +65,8 @@ export default function Form({ addNewContact, setIsModalOpen }) {
           onChange={onInputChange}
           value={number}
         />
-      </Label>
+      </label>
       <Button type="submit">Add contact</Button>
     </StyledForm>
   );
 }
-
-Form.propTypes = {
-  addNewContact: PropTypes.func.isRequired,
-  setIsModalOpen: PropTypes.func.isRequired,
-};

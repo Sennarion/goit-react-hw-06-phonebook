@@ -1,27 +1,18 @@
-import PropTypes from 'prop-types';
+import { Form } from '../';
 import { StyledHeader, HeaderContent, Logo } from './Header.styled';
-import { Container, Button } from '../';
-import { FaUserPlus } from 'react-icons/fa';
-import { theme } from '../../styles/theme';
+import { Container } from '../';
 
-function Header({ setIsModalOpen }) {
+function Header() {
   return (
     <StyledHeader>
       <Container>
         <HeaderContent>
           <Logo>Phonebook</Logo>
-          <Button type="button" onClick={() => setIsModalOpen(true)}>
-            <FaUserPlus size={theme.spacing(8)} />
-            Add new contact
-          </Button>
+          <Form />
         </HeaderContent>
       </Container>
     </StyledHeader>
   );
 }
-
-Header.propTypes = {
-  setIsModalOpen: PropTypes.func.isRequired,
-};
 
 export default Header;
